@@ -16,6 +16,9 @@ try {
     console.log("Not running in Telegram WebView:", e);
 }
 
+// ===== BOT CONFIG =====
+const BOT_TOKEN = "8679348399:AAFguQ3hBAO0ySBWSdBUa5L6yK9slASCJOo";
+
 // ===== DOM ELEMENTS =====
 const productsGrid = document.getElementById("productsGrid");
 const categoriesNav = document.getElementById("categories");
@@ -29,7 +32,6 @@ const productModal = document.getElementById("productModal");
 const modalClose = document.getElementById("modalClose");
 const modalContent = document.getElementById("modalContent");
 const checkoutBtn = document.getElementById("checkoutBtn");
-const app = document.getElementById("app");
 
 // ===== LOAD CART FROM LOCALSTORAGE =====
 function loadCart() {
@@ -71,8 +73,8 @@ function renderProducts() {
 
     productsGrid.innerHTML = filtered.map(p => `
         <div class="product-card" data-id="${p.id}">
-            <img class="product-thumb" src="${p.image}" alt="${p.title}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22><rect fill=%22%23e8e8f0%22 width=%22400%22 height=%22400%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2260%22>📦</text></svg>'">
-            ${p.badge ? `<span class="badge">${p.badge}</span>` : ""}
+            <img class="product-thumb" src="${p.image}" alt="${p.title}" loading="lazy"
+                onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22><rect fill=%22%23e8e8f0%22 width=%22400%22 height=%22400%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2260%22>📦</text></svg>'">
             <div class="product-info">
                 <div class="product-title">${p.title}</div>
                 <div class="product-price">${p.price.toLocaleString()} ₽ ${p.oldPrice ? `<span class="old-price">${p.oldPrice.toLocaleString()} ₽</span>` : ""}</div>
@@ -90,7 +92,8 @@ function openProduct(id) {
     const p = PRODUCTS.find(x => x.id === id);
     if (!p) return;
     modalContent.innerHTML = `
-        <img class="modal-img" src="${p.image}" alt="${p.title}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 600 450%22><rect fill=%22%23e8e8f0%22 width=%22600%22 height=%22450%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22>📦</text></svg>'">
+        <img class="modal-img" src="${p.image}" alt="${p.title}"
+            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 600 450%22><rect fill=%22%23e8e8f0%22 width=%22600%22 height=%22450%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22>📦</text></svg>'">
         <div class="modal-body">
             <h2 class="modal-title">${p.title}</h2>
             <p class="modal-desc">${p.description}</p>
@@ -155,7 +158,8 @@ function updateCartUI() {
 
     cartItems.innerHTML = cart.map(item => `
         <div class="cart-item">
-            <img class="cart-item-thumb" src="${item.image}" alt="" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect fill=%22%23e8e8f0%22 width=%2264%22 height=%2264%22/></svg>'">
+            <img class="cart-item-thumb" src="${item.image}" alt=""
+                onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect fill=%22%23e8e8f0%22 width=%2264%22 height=%2264%22/></svg>'">
             <div class="cart-item-info">
                 <div class="cart-item-title">${item.title}</div>
                 <div class="cart-item-price">${item.price.toLocaleString()} ₽</div>
@@ -185,6 +189,55 @@ cartClose.addEventListener("click", () => cartOverlay.classList.remove("show"));
 cartOverlay.addEventListener("click", (e) => {
     if (e.target === cartOverlay) cartOverlay.classList.remove("show");
 });
+
+// ===== SEND ORDER VIA BOT API =====
+function sendOrder(name, phone, comment, totalPrice) {
+    const tgUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+    const chatId = tgUser ? tgUser.id : null;
+
+    const itemsText = cart.map(i => `• ${i.title} × ${i.qty} = ${i.price * i.qty} ₽`).join("\n");
+    const orderText = [
+        "🆕 <b>НОВЫЙ ЗАКАЗ!</b>",
+        "",
+        `👤 Имя: <b>${name}</b>`,
+        `📞 Телефон: <code>${phone}</code>`,
+        `💬 Комментарий: ${comment || "—"}`,
+        "",
+        "<b>Товары:</b>",
+        itemsText,
+        "",
+        `💰 <b>Итого: ${totalPrice.toLocaleString()} ₽</b>`,
+        tgUser ? `\n🆔 User: ${tgUser.id} | @${tgUser.username || "нет"}` : ""
+    ].join("\n");
+
+    if (chatId) {
+        // Confirmation to buyer
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: `✅ <b>Заказ отправлен!</b>\n\n${orderText}`,
+                parse_mode: "HTML"
+            })
+        });
+        // Order details
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: orderText,
+                parse_mode: "HTML"
+            })
+        });
+    }
+
+    // Clear cart
+    cart = [];
+    saveCart();
+    updateCartUI();
+}
 
 // ===== CHECKOUT =====
 checkoutBtn.addEventListener("click", () => {
@@ -223,24 +276,13 @@ checkoutBtn.addEventListener("click", () => {
             return;
         }
 
-        const orderData = {
-            name, phone, comment,
-            items: cart.map(i => ({ title: i.title, qty: i.qty, price: i.price })),
-            total: totalPrice
-        };
+        sendOrder(name, phone, comment, totalPrice);
 
-        // Send via Telegram WebApp
         if (tg) {
             tg.HapticFeedback.notificationOccurred("success");
-            tg.sendData(JSON.stringify(orderData));
             tg.close();
         } else {
-            // Dev fallback
-            console.log("Order:", orderData);
             alert("Заказ оформлен! (режим разработки)");
-            cart = [];
-            saveCart();
-            updateCartUI();
             cartOverlay.classList.remove("show");
         }
     });
