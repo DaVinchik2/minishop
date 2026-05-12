@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MiniShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-inner">
+                <h1 class="logo">🛍️ MiniShop</h1>
+                <div class="cart-btn" id="cartBtn">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Categories -->
+        <nav class="categories" id="categories"></nav>
+
+        <!-- Products Grid -->
+        <main class="products-grid" id="productsGrid"></main>
+
+        <!-- Product Modal -->
+        <div class="modal-overlay" id="productModal">
+            <div class="modal">
+                <button class="modal-close" id="modalClose">✕</button>
+                <div class="modal-content" id="modalContent"></div>
+            </div>
+        </div>
+
+        <!-- Cart Sidebar -->
+        <div class="cart-overlay" id="cartOverlay">
+            <div class="cart-sidebar">
+                <div class="cart-header">
+                    <h2>Корзина</h2>
+                    <button class="cart-close" id="cartClose">✕</button>
+                </div>
+                <div class="cart-items" id="cartItems"></div>
+                <div class="cart-footer">
+                    <div class="cart-total">Итого: <span id="cartTotal">0</span> ₽</div>
+                    <button class="checkout-btn" id="checkoutBtn">Оформить заказ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/products.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
