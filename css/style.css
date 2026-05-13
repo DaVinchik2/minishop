@@ -81,13 +81,10 @@ body {
     margin: 0 auto;
     padding: 12px 20px;
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
 }
-.categories::-webkit-scrollbar { display: none; }
 .chip {
-    flex-shrink: 0;
     padding: 8px 18px;
     border-radius: 20px;
     background: var(--tg-secondary-bg);
