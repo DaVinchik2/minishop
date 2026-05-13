@@ -14,6 +14,21 @@ const PRODUCTS = [
             "images/RM-Fargo_6.jpg"
         ],
         badge: "Новинка"
+    },
+    {
+        id: 2,
+        title: "Комета 2 Кросс",
+        description: "Кроссовый мотоцикл для активного катания. 4-тактный двигатель 49 см³ (110 см³), мощность 3,5–6,5 л.с. Механическая 4-ступенчатая КПП, воздушное охлаждение. Передний гидравлический дисковый тормоз, задний барабанный. Топливный бак 11 л, расход 3 л/100 км. Электро + кик-стартер.",
+        price: 95000,
+        categories: ["pits"],
+        images: [
+            "images/Komta2-Cross_1.jpg",
+            "images/Komta2-Cross_2.jpg",
+            "images/Komta2-Cross_3.jpg",
+            "images/Komta2-Cross_4.jpg",
+            "images/Komta2-Cross_5.jpg"
+        ],
+        badge: "Хит"
     }
 ];
 
