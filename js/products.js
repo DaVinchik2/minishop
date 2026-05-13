@@ -4,9 +4,17 @@ const PRODUCTS = [
         id: 1,
         title: "Regulmoto Fargo 300",
         description: "Скрамблер с характером. Мощный двигатель 300 см³ для города и бездорожья. Стильный дизайн, надёжная конструкция, комфортная посадка. Идеальный выбор для тех, кто любит свободу и драйв.",
-        price: 0,
-        category: "300cc",
-        image: "images/moto_fargo300_1.jpg",
+        price: 270000,
+        categories: ["300cc", "street"],
+        images: [
+            "images/RM-Fargo_1.jpg",
+            "images/RM-Fargo_2.jpg",
+            "images/RM-Fargo_3.jpg",
+            "images/RM-Fargo_4.jpg",
+            "images/RM-Fargo_5.jpg",
+            "images/RM-Fargo_6.jpg",
+            "images/RM-Fargo_7.jpg"
+        ],
         badge: "Новинка"
     }
 ];

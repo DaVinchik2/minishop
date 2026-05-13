@@ -64,23 +64,29 @@ function renderCategories() {
 function renderProducts() {
     const filtered = currentCategory === "all"
         ? PRODUCTS
-        : PRODUCTS.filter(p => p.category === currentCategory);
+        : PRODUCTS.filter(p => {
+            const cats = p.categories || (p.category ? [p.category] : []);
+            return cats.includes(currentCategory);
+        });
 
     if (filtered.length === 0) {
         productsGrid.innerHTML = `<div class="empty-state"><div class="icon">🏍️</div><p>Нет товаров в этой категории</p></div>`;
         return;
     }
 
-    productsGrid.innerHTML = filtered.map(p => `
+    productsGrid.innerHTML = filtered.map(p => {
+        const img = p.images ? p.images[0] : p.image;
+        return `
         <div class="product-card" data-id="${p.id}">
-            <img class="product-thumb" src="${p.image}" alt="${p.title}" loading="lazy"
+            <img class="product-thumb" src="${img}" alt="${p.title}" loading="lazy"
                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22><rect fill=%22%23e8e8f0%22 width=%22400%22 height=%22400%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2260%22>🏍️</text></svg>'">
             <div class="product-info">
                 <div class="product-title">${p.title}</div>
                 <div class="product-price">${p.price.toLocaleString()} ₽ ${p.oldPrice ? `<span class="old-price">${p.oldPrice.toLocaleString()} ₽</span>` : ""}</div>
             </div>
         </div>
-    `).join("");
+        `;
+    }).join("");
 
     productsGrid.querySelectorAll(".product-card").forEach(card => {
         card.addEventListener("click", () => openProduct(+card.dataset.id));
@@ -91,24 +97,56 @@ function renderProducts() {
 function openProduct(id) {
     const p = PRODUCTS.find(x => x.id === id);
     if (!p) return;
-    modalContent.innerHTML = `
-        <img class="modal-img" src="${p.image}" alt="${p.title}"
-            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 600 450%22><rect fill=%22%23e8e8f0%22 width=%22600%22 height=%22450%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22>🏍️</text></svg>'">
-        <div class="modal-body">
-            <h2 class="modal-title">${p.title}</h2>
-            <p class="modal-desc">${p.description}</p>
-            <div class="modal-price-row">
-                <span class="modal-price">${p.price.toLocaleString()} ₽</span>
-                ${p.oldPrice ? `<span class="old-price" style="font-size:16px;color:var(--tg-hint);text-decoration:line-through">${p.oldPrice.toLocaleString()} ₽</span>` : ""}
+    const images = p.images || (p.image ? [p.image] : []);
+    let currentImgIdx = 0;
+
+    function renderModalImg() {
+        const imgHtml = images.length > 0
+            ? `<div class="gallery">
+                <img class="modal-img" src="${images[currentImgIdx]}" alt="${p.title}"
+                    onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 600 450%22><rect fill=%22%23e8e8f0%22 width=%22600%22 height=%22450%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22>🏍️</text></svg>'">
+                ${images.length > 1 ? `
+                    <button class="gallery-prev" id="galleryPrev">◀</button>
+                    <button class="gallery-next" id="galleryNext">▶</button>
+                    <div class="gallery-counter">${currentImgIdx + 1} / ${images.length}</div>
+                ` : ''}
+               </div>`
+            : `<div class="modal-img" style="display:flex;align-items:center;justify-content:center;background:#e8e8f0;font-size:80px;">🏍️</div>`;
+
+        modalContent.innerHTML = `
+            ${imgHtml}
+            <div class="modal-body">
+                <h2 class="modal-title">${p.title}</h2>
+                <p class="modal-desc">${p.description}</p>
+                <div class="modal-price-row">
+                    <span class="modal-price">${p.price.toLocaleString()} ₽</span>
+                    ${p.oldPrice ? `<span class="old-price" style="font-size:16px;color:var(--tg-hint);text-decoration:line-through">${p.oldPrice.toLocaleString()} ₽</span>` : ""}
+                </div>
+                <button class="add-to-cart-btn" id="addToCartBtn${p.id}">Добавить в корзину — ${p.price.toLocaleString()} ₽</button>
             </div>
-            <button class="add-to-cart-btn" id="addToCartBtn${p.id}">Добавить в корзину — ${p.price.toLocaleString()} ₽</button>
-        </div>
-    `;
+        `;
+
+        document.getElementById(`addToCartBtn${p.id}`).addEventListener("click", () => {
+            addToCart(p.id);
+            productModal.classList.remove("show");
+        });
+
+        if (images.length > 1) {
+            document.getElementById("galleryPrev").addEventListener("click", (e) => {
+                e.stopPropagation();
+                currentImgIdx = (currentImgIdx - 1 + images.length) % images.length;
+                renderModalImg();
+            });
+            document.getElementById("galleryNext").addEventListener("click", (e) => {
+                e.stopPropagation();
+                currentImgIdx = (currentImgIdx + 1) % images.length;
+                renderModalImg();
+            });
+        }
+    }
+
+    renderModalImg();
     productModal.classList.add("show");
-    document.getElementById(`addToCartBtn${p.id}`).addEventListener("click", () => {
-        addToCart(p.id);
-        productModal.classList.remove("show");
-    });
 }
 
 modalClose.addEventListener("click", () => productModal.classList.remove("show"));
@@ -123,7 +161,8 @@ function addToCart(id) {
         existing.qty++;
     } else {
         const p = PRODUCTS.find(x => x.id === id);
-        cart.push({ id: p.id, title: p.title, price: p.price, image: p.image, qty: 1 });
+        const img = p.images ? p.images[0] : p.image;
+        cart.push({ id: p.id, title: p.title, price: p.price, image: img, qty: 1 });
     }
     saveCart();
     updateCartUI();
