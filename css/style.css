@@ -42,7 +42,7 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-.logo { font-size: 22px; font-weight: 700; }
+.logo { font-size: 18px; font-weight: 700; white-space: nowrap; }
 .cart-btn {
     position: relative;
     background: var(--accent);
