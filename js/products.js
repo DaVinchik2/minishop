@@ -11,9 +11,7 @@ const PRODUCTS = [
             "images/RM-Fargo_2.jpg",
             "images/RM-Fargo_3.jpg",
             "images/RM-Fargo_4.jpg",
-            "images/RM-Fargo_5.jpg",
-            "images/RM-Fargo_6.jpg",
-            "images/RM-Fargo_7.jpg"
+            "images/RM-Fargo_6.jpg"
         ],
         badge: "Новинка"
     }
