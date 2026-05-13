@@ -9,8 +9,8 @@
     --tg-btn: var(--tg-theme-button-color, #6c5ce7);
     --tg-btn-text: var(--tg-theme-button-text-color, #ffffff);
     --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #f0f0f5);
-    --accent: #6c5ce7;
-    --accent-light: #a29bfe;
+    --accent: #e63946;
+    --accent-light: #ff6b6b;
     --danger: #e74c3c;
     --success: #00b894;
     --radius: 16px;

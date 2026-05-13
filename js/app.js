@@ -9,8 +9,8 @@ try {
         tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
-        tg.setHeaderColor("#6c5ce7");
-        tg.setBackgroundColor("#ffffff");
+        tg.setHeaderColor("#1a1a2e");
+        tg.setBackgroundColor("#1a1a2e");
     }
 } catch (e) {
     console.log("Not running in Telegram WebView:", e);
@@ -67,14 +67,14 @@ function renderProducts() {
         : PRODUCTS.filter(p => p.category === currentCategory);
 
     if (filtered.length === 0) {
-        productsGrid.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>Нет товаров в этой категории</p></div>`;
+        productsGrid.innerHTML = `<div class="empty-state"><div class="icon">🏍️</div><p>Нет товаров в этой категории</p></div>`;
         return;
     }
 
     productsGrid.innerHTML = filtered.map(p => `
         <div class="product-card" data-id="${p.id}">
             <img class="product-thumb" src="${p.image}" alt="${p.title}" loading="lazy"
-                onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22><rect fill=%22%23e8e8f0%22 width=%22400%22 height=%22400%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2260%22>📦</text></svg>'">
+                onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22><rect fill=%22%23e8e8f0%22 width=%22400%22 height=%22400%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2260%22>🏍️</text></svg>'">
             <div class="product-info">
                 <div class="product-title">${p.title}</div>
                 <div class="product-price">${p.price.toLocaleString()} ₽ ${p.oldPrice ? `<span class="old-price">${p.oldPrice.toLocaleString()} ₽</span>` : ""}</div>
@@ -93,7 +93,7 @@ function openProduct(id) {
     if (!p) return;
     modalContent.innerHTML = `
         <img class="modal-img" src="${p.image}" alt="${p.title}"
-            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 600 450%22><rect fill=%22%23e8e8f0%22 width=%22600%22 height=%22450%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22>📦</text></svg>'">
+            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 600 450%22><rect fill=%22%23e8e8f0%22 width=%22600%22 height=%22450%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22>🏍️</text></svg>'">
         <div class="modal-body">
             <h2 class="modal-title">${p.title}</h2>
             <p class="modal-desc">${p.description}</p>
@@ -152,7 +152,7 @@ function updateCartUI() {
     cartTotal.textContent = totalPrice.toLocaleString();
 
     if (cart.length === 0) {
-        cartItems.innerHTML = `<div class="empty-state"><div class="icon">🛒</div><p>Корзина пуста</p></div>`;
+        cartItems.innerHTML = `<div class="empty-state"><div class="icon">🏍️</div><p>Корзина пуста</p></div>`;
         return;
     }
 
