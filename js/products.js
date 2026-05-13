@@ -59,7 +59,11 @@ const PRODUCTS = [
 
 const CATEGORIES = [
     { id: "all", title: "Все" },
-    { id: "electronics", title: "Электроника" },
-    { id: "accessories", title: "Аксессуары" },
-    { id: "home", title: "Для дома" }
+    { id: "mopeds", title: "Мопеды" },
+    { id: "300cc", title: "300см3" },
+    { id: "250cc", title: "250см3" },
+    { id: "150cc", title: "150см3" },
+    { id: "pits", title: "Питы" },
+    { id: "street", title: "Дорожники" },
+    { id: "atv", title: "Квадроциклы" }
 ];
