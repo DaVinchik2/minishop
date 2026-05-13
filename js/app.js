@@ -21,7 +21,7 @@ const BOT_TOKEN = "8679348399:AAFguQ3hBAO0ySBWSdBUa5L6yK9slASCJOo";
 
 // ===== DOM ELEMENTS =====
 const productsGrid = document.getElementById("productsGrid");
-const categoriesNav = document.getElementById("categories");
+const categoriesNav = document.getElementById("categoryFilter");
 const cartBtn = document.getElementById("cartBtn");
 const cartOverlay = document.getElementById("cartOverlay");
 const cartClose = document.getElementById("cartClose");
@@ -49,14 +49,12 @@ function saveCart() {
 // ===== RENDER CATEGORIES =====
 function renderCategories() {
     categoriesNav.innerHTML = CATEGORIES.map(cat =>
-        `<button class="chip ${cat.id === currentCategory ? 'active' : ''}" data-cat="${cat.id}">${cat.title}</button>`
+        `<option value="${cat.id}">${cat.title}</option>`
     ).join("");
-    categoriesNav.querySelectorAll(".chip").forEach(chip => {
-        chip.addEventListener("click", () => {
-            currentCategory = chip.dataset.cat;
-            renderCategories();
-            renderProducts();
-        });
+    categoriesNav.value = currentCategory;
+    categoriesNav.addEventListener("change", () => {
+        currentCategory = categoriesNav.value;
+        renderProducts();
     });
 }
 
